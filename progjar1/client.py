@@ -10,12 +10,14 @@ try:
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Connect the socket to the port where the server is listening
-    server_address = ('localhost', 10000)
+    server_address = ('localhost', 32444)
     logging.info(f"connecting to {server_address}")
     sock.connect(server_address)
 
     # Send data
-    message = 'INI ADALAH DATA YANG DIKIRIM ABCDEFGHIJKLMNOPQ'
+    f = open("testing.txt", "r")
+    message = f.read()
+    # message = 'INI ADALAH DATA YANG DIKIRIM ABCDEFGHIJKLMNOPQ'
     logging.info(f"sending {message}")
     sock.sendall(message.encode())
     # Look for the response
