@@ -1,10 +1,12 @@
-version: '2'
+version: "2"
 services:
   #mesin1 -- copykan untuk mesin 2,3, dst
   mesin1:
     container_name: progjar-mesin-1
     image: jupyter/scipy-notebook
     user: root
+    ports:
+      - "4001:8888"
     environment:
       - "DOCKER_STACKS_JUPYTER_CMD=lab"
       - "GRANT_SUDO=yes"
@@ -19,6 +21,8 @@ services:
     container_name: progjar-mesin-2
     image: jupyter/scipy-notebook
     user: root
+    ports:
+      - "4002:8888"
     environment:
       - "DOCKER_STACKS_JUPYTER_CMD=lab"
       - "GRANT_SUDO=yes"
@@ -33,6 +37,8 @@ services:
     container_name: progjar-mesin-3
     image: jupyter/scipy-notebook
     user: root
+    ports:
+      - "4003:8888"
     environment:
       - "DOCKER_STACKS_JUPYTER_CMD=lab"
       - "GRANT_SUDO=yes"
@@ -47,6 +53,8 @@ services:
     container_name: progjar-mesin-4
     image: jupyter/scipy-notebook
     user: root
+    ports:
+      - "4004:8888"
     environment:
       - "DOCKER_STACKS_JUPYTER_CMD=lab"
       - "GRANT_SUDO=yes"
@@ -64,5 +72,5 @@ networks:
     ipam:
       driver: default
       config:
-       - subnet: 172.16.16.0/24
-         gateway: 172.16.16.1
+        - subnet: 172.16.16.0/24
+          gateway: 172.16.16.1

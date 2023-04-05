@@ -1,19 +1,22 @@
+import os
 from socket import *
 import socket
 import threading
 import time
 import sys
 import logging
+import ssl
 from http import HttpServer
+from multiprocessing import Process
 
 httpserver = HttpServer()
 
 
-class ProcessTheClient(threading.Thread):
+class ClientProcess(Process):
 	def __init__(self, connection, address):
 		self.connection = connection
 		self.address = address
-		threading.Thread.__init__(self)
+		Process.__init__(self)
 
 	def run(self):
 		rcv=""
@@ -45,30 +48,38 @@ class ProcessTheClient(threading.Thread):
 
 
 
-class Server(threading.Thread):
-	def __init__(self):
+class Server(Process):
+	def __init__(self, ip, port, hostname='testing.net'):
+		self.ip = ip
+		self.port = port
 		self.the_clients = []
+#------------------------------
+		self.hostname = hostname
+		cert_location = os.getcwd() + '/progjar/progjar5/certs/'
+		print(cert_location)
+		self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+		self.context.load_cert_chain(certfile=cert_location + 'domain.crt',keyfile=cert_location + 'domain.key')
+#---------------------------------
 		self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		threading.Thread.__init__(self)
+		Process.__init__(self)
 
 	def run(self):
-		self.my_socket.bind(('0.0.0.0', 8889))
+		self.my_socket.bind((self.ip, self.port))
 		self.my_socket.listen(200)
 		while True:
 			self.connection, self.client_address = self.my_socket.accept()
-			logging.warning("connection from {}".format(self.client_address))
+			try:
+				self.secure_connection = self.context.wrap_socket(self.connection, server_side=True)
+				logging.warning("connection from {}".format(self.client_address))
+				clt = ClientProcess(self.secure_connection, self.client_address)
+				clt.start()
+				self.the_clients.append(clt)
+			except ssl.SSLError as essl:
+				print(str(essl))
 
-			clt = ProcessTheClient(self.connection, self.client_address)
-			clt.start()
-			self.the_clients.append(clt)
-
-
-
-def main():
-	svr = Server()
-	svr.start()
 
 if __name__=="__main__":
-	main()
+	svr = Server('0.0.0.0', 9999)
+	svr.start()
 

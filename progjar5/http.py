@@ -8,10 +8,8 @@ class HttpServer:
 	def __init__(self):
 		self.sessions={}
 		self.types={}
-		self.types['.pdf']='application/pdf'
-		self.types['.jpg']='image/jpeg'
 		self.types['.txt']='text/plain'
-		self.types['.html']='text/html'
+
 	def response(self,kode=404,message='Not Found',messagebody=bytes(),headers={}):
 		tanggal = datetime.now().strftime('%c')
 		resp=[]
@@ -63,15 +61,10 @@ class HttpServer:
 	def http_get(self,object_address,headers):
 		files = glob('./*')
 		print(files)
+		print("THIS IS THE OBJECT ADDRESS" + str(object_address))
 		thedir='./'
 		if (object_address == '/'):
 			return self.response(200,'OK','Ini Adalah web Server percobaan',dict())
-
-		if (object_address == '/video'):
-			return self.response(302,'Found','',dict(location='https://youtu.be/katoxpnTf04'))
-		if (object_address == '/santai'):
-			return self.response(200,'OK','santai saja',dict())
-
 
 		object_address=object_address[1:]
 		if thedir+object_address not in files:
@@ -106,18 +99,3 @@ if __name__=="__main__":
 	#print(d)
 #	d = httpserver.http_get('testing.txt')
 #	print(d)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

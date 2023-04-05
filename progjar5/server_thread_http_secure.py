@@ -6,10 +6,6 @@ import time
 import sys
 import logging
 import ssl
-
-
-
-
 from http import HttpServer
 
 httpserver = HttpServer()
@@ -52,22 +48,24 @@ class ProcessTheClient(threading.Thread):
 
 
 class Server(threading.Thread):
-	def __init__(self,hostname='testing.net'):
+	def __init__(self,ip, port, hostname='testing.net'):
 		self.the_clients = []
+		self.ip = ip
+		self.port = port
 #------------------------------
 		self.hostname = hostname
 		cert_location = os.getcwd() + '/certs/'
+		print(cert_location)
 		self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-		self.context.load_cert_chain(certfile=cert_location + 'domain.crt',
-									 keyfile=cert_location + 'domain.key')
+		self.context.load_cert_chain(certfile=cert_location + 'domain.crt',keyfile=cert_location + 'domain.key')
 #---------------------------------
 		self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		threading.Thread.__init__(self)
 
 	def run(self):
-		self.my_socket.bind(('0.0.0.0', 8443))
-		self.my_socket.listen(1)
+		self.my_socket.bind((self.ip, self.port))
+		self.my_socket.listen(200)
 		while True:
 			self.connection, self.client_address = self.my_socket.accept()
 			try:
@@ -79,13 +77,6 @@ class Server(threading.Thread):
 			except ssl.SSLError as essl:
 				print(str(essl))
 
-
-
-
-def main():
-	svr = Server()
-	svr.start()
-
 if __name__=="__main__":
-	main()
-
+	svr = Server('0.0.0.0', 7777)
+	svr.start()
