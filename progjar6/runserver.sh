@@ -1,9 +1,9 @@
 #jalankan 5 async_server
 
-python3 async_server.py 9002 &
-python3 async_server.py 9003 &
-python3 async_server.py 9004 &
-python3 async_server.py 9005 &
+python3 async_server.py 9999 &
+python3 async_server.py 9998 &
+python3 async_server.py 9997 &
+python3 async_server.py 9996 &
 
 
 
